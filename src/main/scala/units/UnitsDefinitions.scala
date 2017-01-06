@@ -1,25 +1,18 @@
-package units
+package main.scala.units
 
 /**
  * Created by lucatosatto on 8/25/16.
  */
 object UnitsDefinitions {
 
-//  sealed trait Meter
-//  sealed trait Second
-//  sealed trait MeterPerSecond
-
   sealed trait ErrorUnitNotFound
 
-  case object meter
-  case object second
-  case object meterPerSecond
+  case object Meter
+  case object Second
+  case object MeterPerSecond
 
-  type Meter = meter.type
-  type Second = second.type
-  type MeterPerSecond = meterPerSecond.type
-// case object Meter extends Meter
-//  case object Second extends Second
-//  case object MeterPerSecond extends MeterPerSecond
+  type Meter = Meter.type
+  type Second = Second.type
+  type MeterPerSecond = MeterPerSecond.type
 
 }

@@ -1,61 +1,62 @@
-package units
+package main.scala.units
 
-import typeTag.TypeTag._
-import units.UnitsDefinitions._
-
+import main.scala.categories._
+import main.scala.unitWrapper.UnitContainer._
+import main.scala.units.UnitsDefinitions._
+import main.scala.categories.AlgebraicImplementations._
 import Predef.{any2stringadd => _, _}
-import unitsAlgebra.UnitOperationSyntax._
-import unitsAlgebra.BasicOperationImplementations._
-
-import scala.math.Numeric._
+import main.scala.unitsAlgebra.UnitsImplementations
+import main.scala.unitsAlgebra.UnitOperationSyntax._
 
 object UnitsTest extends App {
 
-  import unitsAlgebra.ImplicitUnitResolution._
+  import UnitsImplementations._
 
   // you can sum
-  val oneMeter: Double @@ Meter = 1.0 @@ meter
-  val twoMeters = 2.0 @@ meter
+  val oneMeter: Double @@ Meter.type = 1.0 @@ Meter
+  val twoMeters = 2.0 @@ Meter
 
   val threeMeters = oneMeter + twoMeters
 
   println(threeMeters)
 
+  // also arrays!
+  val arrayMeter: (Double, Double) @@ Meter = (1.0, 2.0) @@ Meter
 
-  // even integers
-  val oneMeteri = 1 @@ meter
-  val twoMetersi = 2 @@ meter
+  val selfSum = arrayMeter + arrayMeter
+  val zeroArray = arrayMeter - arrayMeter
 
-  val threeMetersi: Int @@ Meter = oneMeteri + twoMetersi
-
-  println(threeMetersi)
-
-
-  // Or arrays!
-  val arrayMeter: Seq[Double] @@ Meter = Seq(1.0, 2.0) @@ meter
-
-  val selfSum: Seq[Double] @@ Meter = arrayMeter + arrayMeter
-
-  println(selfSum)  //Seq(1.0, 2.0) @@ Meter
+  println(selfSum)
+  println(zeroArray)
 
   //But only of the same unit!
-  val oneSecond = 1.0 @@ second
-  val error = oneSecond + oneMeter // compiles
-  //val error2: Double @@ Meter = oneSecond + oneMeter // but this! does not compile!
+  val oneMeterPerSecond = 1.0 @@ MeterPerSecond
+  val twoSecond = 2.0 @@ Second
 
-  println(s"auch! $error")
 
-  // I can divide
+  val distance: Double @@ Meter = oneMeterPerSecond * twoSecond
+  val distance2: Double @@ Meter = 2.0 * twoSecond * oneMeterPerSecond
+  val distance3 = twoSecond * 2.0 * oneMeterPerSecond
+//  val distance3: Double @@ Meter = twoSecond * 2.0 * oneMeterPerSecond
+  println(distance)
 
-  val velocity: Double @@ MeterPerSecond = twoMeters / oneSecond
-  println(velocity)
+  // on arrays
+  val arrayMul1 = arrayMeter * 2.0
+  val arrayMul2 = 2.0 * arrayMeter / 3.0
+
+  // array with units
+  val velocityVector = (-1.0, -1.0) @@ MeterPerSecond
+  val arrayMul3 = arrayMeter / twoSecond
+
+  val threeSeconds = 3.0 @@ Second
+
+  val arraydiv = arrayMeter / twoSecond * threeSeconds
+
+  //val SelfDivTest = twoSecond / threeSeconds * oneMeter //todo: fix this
+
 
   //and multiply it back!
-  val meterFromVelocity1 = velocity * oneSecond
-  val meterFromVelocity2 = oneSecond * velocity
-  println(meterFromVelocity1)
-  println(meterFromVelocity2)
-
-  def plus2(a: Double) = a + 2
+//
+//  def plus2(a: Double) = a + 2
 
 }
