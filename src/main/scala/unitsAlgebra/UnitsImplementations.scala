@@ -9,7 +9,7 @@ object UnitsImplementations extends LowPriority {
 
   implicit object MetersPerSecond extends UnitMultiplyAxiom[MeterPerSecond, Second, Meter]  // (m/s) * s = m
 
-  implicit def selfDivision[U]: UnitDivide[U, U, Nothing] = new UnitDivide[U, U, Nothing] {}
+  //implicit def selfDivision[U]: UnitDivide[U, U, Nothing] = new UnitDivide[U, U, Nothing] {}
 
   implicit def noUnitsCanStripUnits[T](in: T @@ Nothing): T = in.value
 

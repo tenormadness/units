@@ -1,8 +1,6 @@
 package main.scala.units
 
-/**
- * Created by lucatosatto on 8/25/16.
- */
+
 object UnitsDefinitions {
 
   sealed trait ErrorUnitNotFound
