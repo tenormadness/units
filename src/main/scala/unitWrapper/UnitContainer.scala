@@ -5,7 +5,7 @@ import scala.language.higherKinds
 
 object UnitContainer {
 
-  class @@[+V, U](val in: V) /*extends AnyVal*/ {
+  class @@[+V, U](val in: V) extends AnyVal {
 
     def value: V = in
 

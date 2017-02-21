@@ -1,45 +1,50 @@
-package main.scala.units
+package units
 
-//import main.scala.categories._
 import main.scala.unitWrapper.UnitContainer._
 import main.scala.units.UnitsDefinitions._
 
 import Predef.{any2stringadd => _, _}
-import main.scala.unitsAlgebra.UnitsImplementations._
-import main.scala.All._
-import main.scala.unitsAlgebra.UnitAlgebraImplementations
-import UnitAlgebraImplementations._
+import categories.AlgerbraOps._
+import categories.AlgebraImplementations._
+import unitsAlgebra.UnitAlgebraImplementations._
+import unitsAlgebra.UnitsOps._
 
 object UnitsTest extends App {
 
+  // categories work
+
+  val four = 1.0 |+| 3.0
+  assert(four == 4.0)
 
 
   // you can sum
   val oneMeter: Double @@ Meter.type = 1.0 @@ Meter
   val twoMeters = 2.0 @@ Meter
-
+//
   val threeMeters: Double @@ Meter.type = oneMeter |+| twoMeters
-
+  val threeMetersAsSum: Double @@ Meter.type = oneMeter + twoMeters
+//
   println(threeMeters)
+  println(threeMetersAsSum)
 
-//  // also arrays!
-//  val arrayMeter: (Double, Double) @@ Meter = (1.0, 2.0) @@ Meter
-//
-//  val selfSum = arrayMeter + arrayMeter
-//  val zeroArray = arrayMeter - arrayMeter
-//
-//  println(selfSum)
-//  println(zeroArray)
-//
-//  //But only of the same unit!
-//  val oneMeterPerSecond = 1.0 @@ MeterPerSecond
-//  val twoSecond = 2.0 @@ Second
+  // also arrays!
+  val arrayMeter: (Double, Double) @@ Meter = (1.0, 2.0) @@ Meter
+
+  val selfSum = arrayMeter + arrayMeter
+  val zeroArray = arrayMeter - arrayMeter
+
+  println(selfSum)
+  println(zeroArray)
+
+  //But only of the same unit!
+  val oneMeterPerSecond = 1.0 @@ MeterPerSecond
+  val twoSecond = 2.0 @@ Second
 
 
 //  val distance: Double @@ Meter = oneMeterPerSecond * twoSecond
 //  val distance2: Double @@ Meter = 2.0 * twoSecond * oneMeterPerSecond
 //  val distance3 = twoSecond * 2.0 * oneMeterPerSecond
-////  val distance3: Double @@ Meter = twoSecond * 2.0 * oneMeterPerSecond
+//  val distance3: Double @@ Meter = twoSecond * 2.0 * oneMeterPerSecond
 //  println(distance)
 //
 //  // on arrays

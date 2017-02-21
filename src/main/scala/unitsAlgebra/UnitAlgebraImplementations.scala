@@ -1,7 +1,7 @@
-package main.scala.unitsAlgebra
+package unitsAlgebra
 
+import categories.{Monoid, Summable, VectorSpace}
 import main.scala.unitWrapper.UnitContainer._
-import main.scala.categories._
 
 import scala.language.implicitConversions
 
@@ -10,11 +10,20 @@ import scala.language.implicitConversions
   */
 object UnitAlgebraImplementations extends  LowPriority1 {
 
-  implicit def unitsMonoid[U, T](implicit ev: Monoid[T]): Monoid[T @@ U] = new Monoid[T @@ U] {
+  implicit def unitsVector[U, T](implicit ev: VectorSpace[T]): VectorSpace[T @@ U] = new VectorSpace[T @@ U] {
     override def zero: @@[T, U] = ev.zero.attachUnit[U]
 
-    override def append(l: @@[T, U], r: @@[T, U]): T @@ U = ev.append(l.value, r.value).attachUnit[U]
+    override def append(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.append(l.value, r.value).attachUnit[U]
+
+    override def minus(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.minus(l.value, r.value).attachUnit[U]
+
+    override def unaryMinus(l: @@[T, U]): @@[T, U] = ev.unaryMinus(l.value).attachUnit[U]
+
+    override def mul(l: @@[T, U], r: Double): @@[T, U] = ev.mul(l.value, r).attachUnit[U]
+
+    override def div(l: @@[T, U], r: Double): @@[T, U] = ev.div(l.value, r).attachUnit[U]
   }
+
 }
 
 trait LowPriority1 extends LowPriority2 {
@@ -39,17 +48,10 @@ trait LowPriority1 extends LowPriority2 {
 //    override def div(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.div(l.value, r.value).attachUnit[U]
 //  }
 trait LowPriority2 {
-  implicit def unitsVector[U, T](implicit ev: Vector[T]): Vector[T @@ U] = new Vector[T @@ U] {
+
+  implicit def unitsMonoid[U, T](implicit ev: Monoid[T]): Monoid[T @@ U] = new Monoid[T @@ U] {
     override def zero: @@[T, U] = ev.zero.attachUnit[U]
 
-    override def append(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.append(l.value, r.value).attachUnit[U]
-
-    override def minus(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.minus(l.value, r.value).attachUnit[U]
-
-    override def unaryMinus(l: @@[T, U]): @@[T, U] = ev.unaryMinus(l.value).attachUnit[U]
-
-    override def mul(l: @@[T, U], r: Double): @@[T, U] = ev.mul(l.value, r).attachUnit[U]
-
-    override def div(l: @@[T, U], r: Double): @@[T, U] = ev.div(l.value, r).attachUnit[U]
+    override def append(l: @@[T, U], r: @@[T, U]): T @@ U = ev.append(l.value, r.value).attachUnit[U]
   }
 }
