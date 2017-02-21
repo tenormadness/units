@@ -1,6 +1,6 @@
-package main.scala.unitsAlgebra
+package unitsAlgebra
 
-import main.scala.unitWrapper.UnitContainer.@@
+import unitWrapper.UnitContainer.@@
 import main.scala.units.UnitsDefinitions._
 import scala.language.implicitConversions
 

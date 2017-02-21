@@ -1,4 +1,4 @@
-package main.scala.unitWrapper
+package unitWrapper
 
 import scala.language.higherKinds
 

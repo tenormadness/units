@@ -3,9 +3,9 @@ package categories
 /**
   * Created by lucatosatto on 2/21/17.
   */
-object AlgerbraOps {
+object AlgebraOps {
 
-  implicit def zero[T](implicit monoid: Monoid[T]): T = monoid.zero
+  def zero[T](implicit monoid: Monoid[T]): T = monoid.zero
 
   implicit class MonoidOps[T](l: T)(implicit monoid: Monoid[T]) {
     def |+|(r: T): T = monoid.append(l,r)

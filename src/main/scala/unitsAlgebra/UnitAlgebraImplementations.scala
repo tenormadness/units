@@ -1,7 +1,7 @@
 package unitsAlgebra
 
 import categories.{Monoid, Summable, VectorSpace}
-import main.scala.unitWrapper.UnitContainer._
+import unitWrapper.UnitContainer._
 
 import scala.language.implicitConversions
 
