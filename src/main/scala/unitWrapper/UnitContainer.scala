@@ -5,6 +5,7 @@ import scala.language.higherKinds
 
 object UnitContainer {
 
+  // V @@ U    value @@ unit  also Double @@ DollarUnit = Dollars
   class @@[+V, U](val in: V) extends AnyVal {
 
     def value: V = in

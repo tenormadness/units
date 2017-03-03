@@ -16,7 +16,7 @@ import unitsAlgebra.UnitAlgebraImplementations._
 class UnitsTest extends FlatSpec {
   
   private implicit class IntelligentEquality[T](l: T) {
-    def coincident(r: T): Boolean = l == r
+    def typeSafeEqual(r: T): Boolean = l == r  //TODO: type safe equal
   }
 
 
@@ -36,29 +36,29 @@ class UnitsTest extends FlatSpec {
     val oneMeter: Double @@ Meter.type = 1.0 @@ Meter
     val twoMeters = 2.0 @@ Meter
   //
-    val threeMeters: Double @@ Meter.type = oneMeter |+| twoMeters
+    val threeMeters: Double @@ Meter.type = oneMeter |+| twoMeters //kill this thing don't be fancy
     val threeMetersAsSum: Double @@ Meter.type = oneMeter + twoMeters
     val negOneMeter: Double @@ Meter.type = oneMeter - twoMeters
 
     val negation = -twoMeters
   //
-    assert(threeMeters coincident 3.0 @@ Meter)
-    assert(threeMetersAsSum coincident 3.0 @@ Meter)
-    assert(negOneMeter coincident -1.0 @@ Meter)
-    assert(negation coincident -2.0 @@ Meter)
+    assert(threeMeters typeSafeEqual 3.0 @@ Meter)
+    assert(threeMetersAsSum typeSafeEqual 3.0 @@ Meter)
+    assert(negOneMeter typeSafeEqual -1.0 @@ Meter)
+    assert(negation typeSafeEqual -2.0 @@ Meter)
 
   }
 
   "sum operations on vectors" should "preserve units" in {
     val arrayMeter: (Double, Double) @@ Meter = (1.0, 2.0) @@ Meter
-    
+
     val selfSum = arrayMeter + arrayMeter
     val zeroArray = arrayMeter - arrayMeter
     val negArray = -arrayMeter
 
-    assert(selfSum coincident (2.0, 4.0) @@ Meter)
-    assert(zeroArray coincident (0.0, 0.0) @@ Meter)
-    assert(negArray coincident (-1.0, -2.0) @@ Meter)
+    assert(selfSum typeSafeEqual (2.0, 4.0) @@ Meter)
+    assert(zeroArray typeSafeEqual (0.0, 0.0) @@ Meter)
+    assert(negArray typeSafeEqual (-1.0, -2.0) @@ Meter)
   }
 
   "array ops" should "Work in pre and post mode" in {
@@ -71,25 +71,42 @@ class UnitsTest extends FlatSpec {
     val fourSecondsPostmul = twoSeconds * 2.0
   }
 
+  "vector space ops without units" should "not cause collisions" in {
+
+    val vector = (1.0, 2.0)
+
+    val result1 = vector * 2.0
+    val result2 = 3.0 * vector
+    val result3 = vector / 4.0
+
+    assert(result1 typeSafeEqual (2.0, 4.0))
+    assert(result2 typeSafeEqual (3.0, 6.0))
+    assert(result3 typeSafeEqual (0.25, 0.5))
+
+
+  }
+
   "ring multiplicative Ops" should "return the correct unit" in {
 
+import unitsAlgebra.UnitDivision._
 
     val twoSecond = 2.0 @@ Second
     val velocity = 5.0 @@ MeterPerSecond
     val distance = 10.0 @@ Meter
 
-    //val divTest1_ = UnitsRingOpsFULL(distance) / velocity
     val divTest1 = distance / velocity
     val divTest2 = distance / twoSecond
 
     val mulTest1 = velocity * twoSecond
     val mulTest2 = twoSecond * velocity
 
-    assert(divTest1 coincident 2.0 @@ Second)
-    assert(divTest2 coincident 5.0 @@ MeterPerSecond)
+    val pureRatio = twoSecond / twoSecond
 
-    assert(mulTest1 coincident 10.0 @@ Meter)
-    assert(mulTest2 coincident 10.0 @@ Meter)
+    assert(divTest1 typeSafeEqual 2.0 @@ Second)
+    assert(divTest2 typeSafeEqual 5.0 @@ MeterPerSecond)
+
+    assert(mulTest1 typeSafeEqual 10.0 @@ Meter)
+    assert(mulTest2 typeSafeEqual 10.0 @@ Meter)
 
   }
 
@@ -104,13 +121,13 @@ class UnitsTest extends FlatSpec {
     val divTest2 = distance / twoSecond
 
     val mulTest1 = velocityVector * twoSecond
-    // val mulTest2 = twoSecond * velocityVector //TODO: MAKE THIS WORK!
+    val mulTest2 = twoSecond * velocityVector //TODO: MAKE THIS WORK!
 
-    assert(divTest1 coincident (2.0, 4.0) @@ Second)
-    assert(divTest2 coincident (5.0, 10.0) @@ MeterPerSecond)
+    assert(divTest1 typeSafeEqual (2.0, 4.0) @@ Second)
+    assert(divTest2 typeSafeEqual (5.0, 10.0) @@ MeterPerSecond)
 
-    assert(mulTest1 coincident (10.0, 20.0) @@ Meter)
-    //assert(mulTest2 coincident 10.0 @@ Meter)
+    assert(mulTest1 typeSafeEqual (10.0, 20.0) @@ Meter)
+    assert(mulTest2 typeSafeEqual (10.0, 20.0) @@ Meter)
   }
 
   "defining a simple Ring Class" should "not interfere with uits" in {
@@ -140,35 +157,5 @@ class UnitsTest extends FlatSpec {
 
   }
 
-
-
-
-  //dsgag erg wtegwe
-
-
-  //  val distance: Double @@ Meter = oneMeterPerSecond * twoSecond
-  //  val distance2: Double @@ Meter = 2.0 * twoSecond * oneMeterPerSecond
-  //  val distance3 = twoSecond * 2.0 * oneMeterPerSecond
-  //  val distance3: Double @@ Meter = twoSecond * 2.0 * oneMeterPerSecond
-  //  println(distance)
-  //
-  //  // on arrays
-  //  val arrayMul1 = arrayMeter * 2.0
-  //  val arrayMul2 = 2.0 * arrayMeter / 3.0
-  //
-  //  // array with units
-  //  val velocityVector = (-1.0, -1.0) @@ MeterPerSecond
-  //  val arrayMul3 = arrayMeter / twoSecond
-  //
-  //  val threeSeconds = 3.0 @@ Second
-  //
-  //  val arraydiv = arrayMeter / twoSecond * threeSeconds
-
-    //val SelfDivTest = twoSecond / threeSeconds * oneMeter //todo: fix this
-
-
-    //and multiply it back!
-  //
-  //  def plus2(a: Double) = a + 2
 
 }
