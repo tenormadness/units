@@ -38,15 +38,7 @@ trait LowPriority1 extends LowPriority2 {
     override def unaryMinus(l: @@[T, U]): @@[T, U] = ev.unaryMinus(l.value).attachUnit[U]
   }
 }
-//  implicit def unitsRing[U, T](implicit ev: Ring[T]): Ring[T @@ U] = new Ring[T @@ U] {
-//    override def zero: @@[T, U] = ev.zero.attachUnit[U]
-//
-//    override def append(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.append(l.value, r.value).attachUnit[U]
-//
-//    override def mul(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.mul(l.value, r.value).attachUnit[U]
-//
-//    override def div(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.div(l.value, r.value).attachUnit[U]
-//  }
+
 trait LowPriority2 {
 
   implicit def unitsMonoid[U, T](implicit ev: Monoid[T]): Monoid[T @@ U] = new Monoid[T @@ U] {

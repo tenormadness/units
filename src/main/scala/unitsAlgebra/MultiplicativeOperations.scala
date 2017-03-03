@@ -8,6 +8,6 @@ trait UnitMultiply[Left, Right, Result]
 // An axiomatic rule (decided by the user)
 trait UnitMultiplyAxiom[Left, Right, Result] extends UnitMultiply[Left, Right, Result]
 
-// Multiplication rule
+// Multiplication rule inferred using commutative multiplication
 trait UnitMultiplyCommutative[Left, Right, Result] extends UnitMultiply[Left, Right, Result]
 
