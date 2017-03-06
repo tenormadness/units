@@ -1,13 +1,20 @@
 package unitsAlgebra
 
 import unitWrapper.UnitContainer.@@
-import main.scala.units.UnitsDefinitions._
+
 import scala.language.implicitConversions
 
 object UnitsImplementations {
 
-  implicit object MetersPerSecond extends UnitMultiplyAxiom[MeterPerSecond, Second, Meter]  // (m/s) * s = m
+  case class Meter()
+  case class MeterSq()
+  case class Second()
+  case class MeterPerSecond()
+  case class MeterPerSecondSq()
 
-  implicit def multiplicationIsCommutative[U, V, W](implicit ev: UnitMultiplyAxiom[U, V, W]) = new UnitMultiply[V, U, W] {}
+  implicit object MetersPerSecond extends UnitMultiplyAxiom[MeterPerSecond, Second, Meter]  // (m/s) * s = m
+  implicit object MetersPerSecondSq extends UnitMultiplyAxiom[MeterPerSecondSq, Second, MeterPerSecond]
+  implicit object MeterToMeterSq extends SquareUnitRule[Meter, MeterSq]
+
 }
 

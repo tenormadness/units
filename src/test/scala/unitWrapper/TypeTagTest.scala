@@ -1,14 +1,14 @@
 package typeTag
 
 import unitWrapper.UnitContainer._
-import main.scala.units.UnitsDefinitions.{Meter}
+import unitsAlgebra.UnitsImplementations._
 
 
 
 object TypeTagTest extends App {
 
 
-  val oneMeter: Double @@ Meter = 1.0 @@ Meter
+  val oneMeter: Double @@ Meter = 1.0.@@[Meter]
 
   val one: Double = oneMeter.value
 

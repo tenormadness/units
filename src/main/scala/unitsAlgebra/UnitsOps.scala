@@ -7,7 +7,7 @@ import unitWrapper.UnitContainer._
 /**
   * Created by lucatosatto on 2/21/17.
   */
-object UnitsOps {
+trait UnitsOps {
 
   implicit class GenericUnitOps[T, U](l: T @@ U) {
 

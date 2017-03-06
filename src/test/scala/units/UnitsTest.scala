@@ -1,16 +1,15 @@
 package units
 
-import unitWrapper.UnitContainer._
-import main.scala.units.UnitsDefinitions._
-import unitsAlgebra.UnitsOps._
 import categories.AlgebraImplementations._
+import unitsAlgebra._
+import categories.AlgebraOps._ //this should be from spire
+import categories.Ring //this should be from spire
 import unitsAlgebra.UnitsImplementations._
-import categories.AlgebraOps._
-import categories.Ring
 
 import Predef.{any2stringadd => _, _}
 import org.scalatest.FlatSpec
-import unitsAlgebra.UnitAlgebraImplementations._
+import unitWrapper.UnitContainer._ //this should be from hapeless
+
 
 
 class UnitsTest extends FlatSpec {
@@ -33,38 +32,38 @@ class UnitsTest extends FlatSpec {
 
   "Summable and monoid operations on units" should "work" in {
     // you can sum
-    val oneMeter: Double @@ Meter.type = 1.0 @@ Meter
-    val twoMeters = 2.0 @@ Meter
+    val oneMeter: Double @@ Meter = 1.0.@@[Meter]
+    val twoMeters = 2.0.@@[Meter]
   //
-    val threeMeters: Double @@ Meter.type = oneMeter |+| twoMeters //kill this thing don't be fancy
-    val threeMetersAsSum: Double @@ Meter.type = oneMeter + twoMeters
-    val negOneMeter: Double @@ Meter.type = oneMeter - twoMeters
+    val threeMeters: Double @@ Meter = oneMeter |+| twoMeters //kill this thing don't be fancy
+    val threeMetersAsSum: Double @@ Meter = oneMeter + twoMeters
+    val negOneMeter: Double @@ Meter = oneMeter - twoMeters
 
     val negation = -twoMeters
   //
-    assert(threeMeters typeSafeEqual 3.0 @@ Meter)
-    assert(threeMetersAsSum typeSafeEqual 3.0 @@ Meter)
-    assert(negOneMeter typeSafeEqual -1.0 @@ Meter)
-    assert(negation typeSafeEqual -2.0 @@ Meter)
+    assert(threeMeters typeSafeEqual 3.0.@@[Meter])
+    assert(threeMetersAsSum typeSafeEqual 3.0.@@[Meter])
+    assert(negOneMeter typeSafeEqual -1.0.@@[Meter])
+    assert(negation typeSafeEqual -2.0.@@[Meter])
 
   }
 
   "sum operations on vectors" should "preserve units" in {
-    val arrayMeter: (Double, Double) @@ Meter = (1.0, 2.0) @@ Meter
+    val arrayMeter: (Double, Double) @@ Meter = (1.0, 2.0).@@[Meter]
 
     val selfSum = arrayMeter + arrayMeter
     val zeroArray = arrayMeter - arrayMeter
     val negArray = -arrayMeter
 
-    assert(selfSum typeSafeEqual (2.0, 4.0) @@ Meter)
-    assert(zeroArray typeSafeEqual (0.0, 0.0) @@ Meter)
-    assert(negArray typeSafeEqual (-1.0, -2.0) @@ Meter)
+    assert(selfSum typeSafeEqual (2.0, 4.0).@@[Meter])
+    assert(zeroArray typeSafeEqual (0.0, 0.0).@@[Meter])
+    assert(negArray typeSafeEqual (-1.0, -2.0).@@[Meter])
   }
 
   "array ops" should "Work in pre and post mode" in {
 
-    val oneMeterPerSecond = 1.0 @@ MeterPerSecond
-    val twoSeconds = 2.0 @@ Second
+    val oneMeterPerSecond = 1.0.@@[MeterPerSecond]
+    val twoSeconds = 2.0.@@[Second]
 
     val oneSecond = twoSeconds / 2.0
     val fourSeconds = 2.0 * twoSeconds
@@ -88,11 +87,9 @@ class UnitsTest extends FlatSpec {
 
   "ring multiplicative Ops" should "return the correct unit" in {
 
-import unitsAlgebra.UnitDivision._
-
-    val twoSecond = 2.0 @@ Second
-    val velocity = 5.0 @@ MeterPerSecond
-    val distance = 10.0 @@ Meter
+    val twoSecond = 2.0.@@[Second]
+    val velocity = 5.0.@@[MeterPerSecond]
+    val distance = 10.0.@@[Meter]
 
     val divTest1 = distance / velocity
     val divTest2 = distance / twoSecond
@@ -102,32 +99,32 @@ import unitsAlgebra.UnitDivision._
 
     val pureRatio = twoSecond / twoSecond
 
-    assert(divTest1 typeSafeEqual 2.0 @@ Second)
-    assert(divTest2 typeSafeEqual 5.0 @@ MeterPerSecond)
+    assert(divTest1 typeSafeEqual 2.0.@@[Second])
+    assert(divTest2 typeSafeEqual 5.0.@@[MeterPerSecond])
 
-    assert(mulTest1 typeSafeEqual 10.0 @@ Meter)
-    assert(mulTest2 typeSafeEqual 10.0 @@ Meter)
+    assert(mulTest1 typeSafeEqual 10.0.@@[Meter])
+    assert(mulTest2 typeSafeEqual 10.0.@@[Meter])
 
   }
 
   "Unit multiplicative Ops for vectors with unit" should "just work" in {
 
-    val twoSecond = 2.0 @@ Second
-    val velocity = 5.0 @@ MeterPerSecond
-    val velocityVector = (5.0, 10.0) @@ MeterPerSecond
-    val distance = (10.0, 20.0) @@ Meter
+    val twoSecond = 2.0.@@[Second]
+    val velocity = 5.0.@@[MeterPerSecond]
+    val velocityVector = (5.0, 10.0).@@[MeterPerSecond]
+    val distance = (10.0, 20.0).@@[Meter]
 
     val divTest1 = distance / velocity //doesn't really make sense from a physics prospect but...
     val divTest2 = distance / twoSecond
 
     val mulTest1 = velocityVector * twoSecond
-    val mulTest2 = twoSecond * velocityVector //TODO: MAKE THIS WORK!
+    val mulTest2 = twoSecond * velocityVector
 
-    assert(divTest1 typeSafeEqual (2.0, 4.0) @@ Second)
-    assert(divTest2 typeSafeEqual (5.0, 10.0) @@ MeterPerSecond)
+    assert(divTest1 typeSafeEqual (2.0, 4.0).@@[Second])
+    assert(divTest2 typeSafeEqual (5.0, 10.0).@@[MeterPerSecond])
 
-    assert(mulTest1 typeSafeEqual (10.0, 20.0) @@ Meter)
-    assert(mulTest2 typeSafeEqual (10.0, 20.0) @@ Meter)
+    assert(mulTest1 typeSafeEqual (10.0, 20.0).@@[Meter])
+    assert(mulTest2 typeSafeEqual (10.0, 20.0).@@[Meter])
   }
 
   "defining a simple Ring Class" should "not interfere with uits" in {
@@ -156,6 +153,16 @@ import unitsAlgebra.UnitDivision._
     assert(-x == o)
 
   }
+
+  "Chaining together operations with different units" should "not create problems, untis are resolved as we go" in {
+
+    val test1 = (1.0.@@[Meter] / 2.0.@@[Second] + 1.5.@@[MeterPerSecond]) / 4.0.@@[Second]
+
+    assert(test1 typeSafeEqual 0.5.@@[MeterPerSecondSq])
+
+  }
+
+  "Sqaring things up "
 
 
 }

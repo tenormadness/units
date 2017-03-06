@@ -8,7 +8,7 @@ import scala.language.implicitConversions
 /**
   * Created by luca on 1/16/17.
   */
-object UnitAlgebraImplementations extends  LowPriority1 {
+trait UnitAlgebraImplementations extends  LowPriority1 {
 
   implicit def unitsVector[U, T](implicit ev: VectorSpace[T]): VectorSpace[T @@ U] = new VectorSpace[T @@ U] {
     override def zero: @@[T, U] = ev.zero.attachUnit[U]
