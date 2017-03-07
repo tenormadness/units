@@ -8,18 +8,16 @@ import unitsAlgebra.UnitsImplementations._
 
 import Predef.{any2stringadd => _, _}
 import org.scalatest.FlatSpec
-import unitWrapper.UnitContainer._ //this should be from hapeless
-
-
+import unitWrapper.UnitContainer._ //this should be from shapeless
 
 class UnitsTest extends FlatSpec {
   
   private implicit class IntelligentEquality[T](l: T) {
-    def typeSafeEqual(r: T): Boolean = l == r  //TODO: type safe equal
+    def typeSafeEqual(r: T): Boolean = l == r
   }
 
 
-  "Monoind and summable Ops" should "work" in {
+  "Monoid and summable Ops" should "work" in {
     // categories work
 
     val four = 1.0 |+| 3.0
@@ -48,7 +46,7 @@ class UnitsTest extends FlatSpec {
 
   }
 
-  "sum operations on vectors" should "preserve units" in {
+  "Sum operations on vectors" should "preserve units" in {
     val arrayMeter: (Double, Double) @@ Meter = (1.0, 2.0).@@[Meter]
 
     val selfSum = arrayMeter + arrayMeter
@@ -60,7 +58,7 @@ class UnitsTest extends FlatSpec {
     assert(negArray typeSafeEqual (-1.0, -2.0).@@[Meter])
   }
 
-  "array ops" should "Work in pre and post mode" in {
+  "Array ops" should "Work in pre and post mode" in {
 
     val oneMeterPerSecond = 1.0.@@[MeterPerSecond]
     val twoSeconds = 2.0.@@[Second]
@@ -70,7 +68,7 @@ class UnitsTest extends FlatSpec {
     val fourSecondsPostmul = twoSeconds * 2.0
   }
 
-  "vector space ops without units" should "not cause collisions" in {
+  "Vector space ops without units" should "not cause collisions" in {
 
     val vector = (1.0, 2.0)
 
@@ -85,7 +83,7 @@ class UnitsTest extends FlatSpec {
 
   }
 
-  "ring multiplicative Ops" should "return the correct unit" in {
+  "Ring multiplicative Ops" should "return the correct unit" in {
 
     val twoSecond = 2.0.@@[Second]
     val velocity = 5.0.@@[MeterPerSecond]
@@ -127,7 +125,7 @@ class UnitsTest extends FlatSpec {
     assert(mulTest2 typeSafeEqual (10.0, 20.0).@@[Meter])
   }
 
-  "defining a simple Ring Class" should "not interfere with uits" in {
+  "Defining a simple Ring Class" should "not interfere with units" in {
 
     trait Boole extends Product with Serializable
     case object O extends Boole
@@ -154,15 +152,25 @@ class UnitsTest extends FlatSpec {
 
   }
 
-  "Chaining together operations with different units" should "not create problems, untis are resolved as we go" in {
+  "Chaining together operations with different units" should "not create problems, units are resolved as we go" in {
 
-    val test1 = (1.0.@@[Meter] / 2.0.@@[Second] + 1.5.@@[MeterPerSecond]) / 4.0.@@[Second]
+    val test1: Double @@ MeterPerSecondSq = 7.0 * (1.0.@@[Meter] / 2.0.@@[Second] + 1.5.@@[MeterPerSecond]) / 4.0.@@[Second] / 0.025
 
-    assert(test1 typeSafeEqual 0.5.@@[MeterPerSecondSq])
+    assert(test1 typeSafeEqual 140.0.@@[MeterPerSecondSq])
 
   }
 
-  "Sqaring things up "
+  "Squaring things up " should "work well" in {
+
+    val squareMeter = 2.0.@@[Meter] * 3.0.@@[Meter]
+
+    val backToMeter = squareMeter / 4.0.@@[Meter]
+
+    assert(squareMeter typeSafeEqual 6.0.@@[MeterSq])
+    assert(backToMeter typeSafeEqual 1.5.@@[Meter])
+
+
+  }
 
 
 }

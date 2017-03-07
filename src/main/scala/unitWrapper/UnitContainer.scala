@@ -2,15 +2,16 @@ package unitWrapper
 
 import scala.language.higherKinds
 
+class UnitContainer[+V, U](val in: V) extends AnyVal {  // V @@ U
+
+  def value: V = in
+
+  override def toString: String = in.toString + " with some unknown unit"
+}
 
 object UnitContainer {
 
-  class @@[+V, U](val in: V) extends AnyVal {  // V @@ U
-
-    def value: V = in
-
-    override def toString: String = in.toString + " with some unknown unit"
-  }
+  type @@[+V, U] = UnitContainer[V, U]
 
   implicit class Wrapper[V](in: V) {
 

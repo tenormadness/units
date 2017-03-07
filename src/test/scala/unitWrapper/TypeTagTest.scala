@@ -3,8 +3,6 @@ package typeTag
 import unitWrapper.UnitContainer._
 import unitsAlgebra.UnitsImplementations._
 
-
-
 object TypeTagTest extends App {
 
 

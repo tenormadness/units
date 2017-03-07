@@ -1,20 +1,16 @@
 package unitsAlgebra
 
-import unitWrapper.UnitContainer.@@
-
-import scala.language.implicitConversions
-
 object UnitsImplementations {
 
-  case class Meter()
-  case class MeterSq()
-  case class Second()
-  case class MeterPerSecond()
-  case class MeterPerSecondSq()
+  trait Meter
+  trait MeterSq
+  trait Second
+  trait MeterPerSecond
+  trait MeterPerSecondSq
 
-  implicit object MetersPerSecond extends UnitMultiplyAxiom[MeterPerSecond, Second, Meter]  // (m/s) * s = m
-  implicit object MetersPerSecondSq extends UnitMultiplyAxiom[MeterPerSecondSq, Second, MeterPerSecond]
-  implicit object MeterToMeterSq extends SquareUnitRule[Meter, MeterSq]
+  implicit val UnitRule1 = new (MeterPerSecond MultiplyBy Second) .yields [Meter]
+  implicit val UnitRule2 = new (MeterPerSecond DivideBy Second) .yields [MeterPerSecondSq]
+  implicit val UnitRule3 = new (Meter MultiplyBy Meter) .yields [MeterSq]
 
 }
 
