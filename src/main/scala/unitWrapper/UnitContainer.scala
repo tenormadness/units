@@ -1,5 +1,7 @@
 package unitWrapper
 
+import algebra.Eq
+
 import scala.language.higherKinds
 
 class UnitContainer[+V, U](val in: V) extends AnyVal {  // V @@ U
@@ -22,5 +24,11 @@ object UnitContainer {
     def attachUnit[U]: V @@ U = new @@[V, U](in)
 
   }
+
+  // type safe equality
+  implicit def UnitEquality[V, U]: Eq[UnitContainer[V, U]] = new Eq[UnitContainer[V, U]] {
+    override def eqv(x: @@[V, U], y: @@[V, U]): Boolean = x.value == y.value
+  }
+
 }
 
