@@ -79,7 +79,6 @@ class UnitsTest extends FlatSpec {
     assert(result2 typeSafeEqual (3.0, 6.0))
     assert(result3 typeSafeEqual (0.25, 0.5))
 
-
   }
 
   "Ring multiplicative Ops" should "return the correct unit" in {
