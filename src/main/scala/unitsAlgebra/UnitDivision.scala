@@ -1,6 +1,5 @@
 package unitsAlgebra
 
-import categories.{VectorSpace}
 import unitWrapper.UnitContainer._
 import unitsAlgebra.UnitDivision.UnitDivisionAux
 import spire.algebra._
@@ -30,21 +29,21 @@ object UnitDivision extends LowPriorityDivRules {
 
   type UnitDivisionAux[L, R, Out] = UnitDivision[L, R] { type Result = Out }
 
-  implicit def unitVectorDivision[T, U, UU, UR](implicit vector: VectorSpace[T], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, Double @@ UU, T @@ UR] = {
+  implicit def unitVectorDivision[T, U, UU, UR](implicit vector: VectorSpace[T, Double], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, Double @@ UU, T @@ UR] = {
     new UnitDivision[T @@ U, Double @@ UU] {
 
       override type Result = T @@ UR
 
-      override def div(l: T @@ U, r: Double @@ UU): Result = vector.div(l.value, r.value).attachUnit[UR]
+      override def div(l: T @@ U, r: Double @@ UU): Result = vector.divr(l.value, r.value).attachUnit[UR]
     }
   }
 
-  implicit def doubleVectorDivision[T, U](implicit vector: VectorSpace[T]): UnitDivisionAux[T @@ U, Double, T @@ U] = {
+  implicit def doubleVectorDivision[T, U](implicit vector: VectorSpace[T, Double]): UnitDivisionAux[T @@ U, Double, T @@ U] = {
     new UnitDivision[T @@ U, Double] {
 
       override type Result = T @@ U
 
-      override def div(l: T @@ U, r: Double): Result = vector.div(l.value, r).attachUnit[U]
+      override def div(l: T @@ U, r: Double): Result = vector.divr(l.value, r).attachUnit[U]
     }
   }
 }

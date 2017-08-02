@@ -6,29 +6,35 @@ import spire.algebra._
   */
 object AlgebraImplementations {
 
-  implicit object DoubleAlgebra extends VectorSpace[Double] with Group[Double] with Field[Double] {
+  implicit object DoubleAlgebra extends VectorSpace[Double, Double] with Group[Double] with Field[Double] {
     override def times(l: Double, r: Double): Double = l * r
 
     override def div(l: Double, r: Double): Double = l / r
-    override def id: Double = 0.0
-    override def op(x: Double, y: Double): Double = x + y
-    override def inverse(a: Double): Double = 1/a
+    override def empty: Double = 0.0
+    override def combine(x: Double, y: Double): Double = x + y
+    override def inverse(a: Double): Double = {
+      -a
+    }
 
-    override def mul(l: Double, r: Double): Double = l*r
+    override implicit def scalar: Field[Double] = implicitly
+
+    override def timesl(r: Double, v: Double): Double = r * v
 
     override def quot(a: Double, b: Double): Double = a/b
 
     override def mod(a: Double, b: Double): Double = mod(a, b)
 
-    override def gcd(a: Double, b: Double): Double = throw new IllegalStateException("gigawhat!")
+    override def lcm(a: Double, b: Double)(implicit ev: Eq[Double]): Double = (a*b).abs/gcd(a,b)
+
+    override def gcd(a: Double, b: Double)(implicit ev: Eq[Double]): Double = if(b == empty) a else gcd(b, mod(a,b))
 
     override def one: Double = 1.0
 
-    override def negate(x: Double): Double = -1
+    override def negate(x: Double): Double = -x
 
     override def zero: Double = 0.0
 
-    override def plus(x: Double, y: Double): Double = x+y
+    override def plus(x: Double, y: Double): Double = x + y
   }
 
   implicit object IntAlgebra extends Group[Int] with Field[Int] {
@@ -39,7 +45,9 @@ object AlgebraImplementations {
 
     override def mod(a: Int, b: Int): Int = mod(a, b)
 
-    override def gcd(a: Int, b: Int): Int = throw new IllegalStateException("Gigawhat!")
+    override def gcd(a: Int, b: Int)(implicit ev: Eq[Int]): Int = if(b == empty) a else gcd(b, mod(a,b))
+
+    override def lcm(a: Int, b: Int)(implicit ev: Eq[Int]): Int = (a*b).abs/gcd(a,b)
 
     override def one: Int = 1
 
@@ -52,18 +60,26 @@ object AlgebraImplementations {
     override def plus(x: Int, y: Int): Int = x + y
 
     override def div(l: Int, r: Int): Int = l / r
-    override def id: Int = 0
-    override def op(x: Int, y: Int): Int = x+y
+    override def empty: Int = 0
+    override def combine(x: Int, y: Int): Int = x + y
   }
 
-  implicit object VectorAlgebra extends VectorSpace[(Double, Double)] {
-    override def mul(l: (Double, Double), r: Double): (Double, Double) = (l._1*r, l._2*r)
+  implicit object VectorAlgebra extends VectorSpace[(Double, Double), Double] with Group[(Double, Double)] {
 
-    override def div(l: (Double, Double), r: Double): (Double, Double) = (l._1/r, l._2/r)
-    override def id: (Double, Double) = (0.0, 0.0)
+    override implicit def scalar: Field[Double] = implicitly
 
-    override def op(l: (Double, Double), r: (Double, Double)): (Double, Double) = (l._1+r._1, l._2+r._2)
+    override def timesl(r: Double, v: (Double, Double)): (Double, Double) = (v._1 * r, v._2 * r)
 
-    override def inverse(l: (Double, Double)) = (-l._1, -l._2)
+    override def negate(x: (Double, Double)): (Double, Double) = (-x._1, -x._2)
+
+    override def zero: (Double, Double) = (0.0, 0.0)
+
+    override def plus(x: (Double, Double), y: (Double, Double)): (Double, Double) = (x._1+y._1, x._2+y._2)
+
+    override def inverse(a: (Double, Double)): (Double, Double) = (-a._1, -a._2)
+
+    override def empty: (Double, Double) = (0.0, 0.0)
+
+    override def combine(x: (Double, Double), y: (Double, Double)): (Double, Double) = (x._1+y._1, x._2+y._2)
   }
 }

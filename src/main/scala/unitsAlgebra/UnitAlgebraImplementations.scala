@@ -1,7 +1,6 @@
 package unitsAlgebra
 
 import spire.algebra._
-import categories.{VectorSpace}
 import unitWrapper.UnitContainer._
 
 import scala.language.implicitConversions
@@ -11,18 +10,20 @@ import scala.language.implicitConversions
   */
 trait UnitAlgebraImplementations extends  LowPriority1 {
 
-  implicit def unitsVector[U, T](implicit ev: VectorSpace[T]): VectorSpace[T @@ U] = new VectorSpace[T @@ U] {
-    override def id: @@[T, U] = ev.id.attachUnit[U]
+  implicit def unitsVector[U, T](implicit ev: VectorSpace[T, Double]): VectorSpace[T @@ U, Double] = new VectorSpace[T @@ U, Double] {
 
-    override def op(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.op(l.value, r.value).attachUnit[U]
+    override implicit def scalar: Field[Double] = implicitly
 
-    override def opInverse(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.opInverse(l.value, r.value).attachUnit[U]
+    override def timesl(r: Double, v: @@[T, U]): @@[T, U] = ev.timesl(r, v.value).attachUnit[U]
 
-    override def inverse(l: @@[T, U]): @@[T, U] = ev.inverse(l.value).attachUnit[U]
+    override def negate(x: @@[T, U]): @@[T, U] = {
+      ev.negate(x.value).attachUnit[U]
+    }
 
-    override def mul(l: @@[T, U], r: Double): @@[T, U] = ev.mul(l.value, r).attachUnit[U]
+    override def zero: @@[T, U] = ev.zero.attachUnit[U]
 
-    override def div(l: @@[T, U], r: Double): @@[T, U] = ev.div(l.value, r).attachUnit[U]
+    override def plus(x: @@[T, U], y: @@[T, U]): @@[T, U] = ev.plus(x.value, y.value).attachUnit[U]
+
   }
 
 }
@@ -30,9 +31,10 @@ trait UnitAlgebraImplementations extends  LowPriority1 {
 trait LowPriority1 extends LowPriority2 {
 
   implicit def unitsSummable[U, T](implicit ev: Group[T]): Group[T @@ U] = new Group[T @@ U] {
-    override def id: @@[T, U] = ev.id.attachUnit[U]
 
-    override def op(l: @@[T, U], r: @@[T, U]): @@[T, U] = ev.op(l.value, r.value).attachUnit[U]
+    override def empty: @@[T, U] = ev.empty.attachUnit[U]
+
+    override def combine(x: @@[T, U], y: @@[T, U]): @@[T, U] = ev.combine(x.value, y.value).attachUnit[U]
 
     override def inverse(l: @@[T, U]): @@[T, U] = ev.inverse(l.value).attachUnit[U]
   }
@@ -41,8 +43,8 @@ trait LowPriority1 extends LowPriority2 {
 trait LowPriority2 {
 
   implicit def unitsMonoid[U, T](implicit ev: Monoid[T]): Monoid[T @@ U] = new Monoid[T @@ U] {
-    override def id: @@[T, U] = ev.id.attachUnit[U]
+    override def empty: @@[T, U] = ev.empty.attachUnit[U]
 
-    override def op(l: @@[T, U], r: @@[T, U]): T @@ U = ev.op(l.value, r.value).attachUnit[U]
+    override def combine(l: @@[T, U], r: @@[T, U]): T @@ U = ev.combine(l.value, r.value).attachUnit[U]
   }
 }

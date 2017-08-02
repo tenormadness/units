@@ -7,21 +7,17 @@ import spire.algebra._
   */
 object AlgebraOps {
 
-  def zero[T](implicit monoid: Monoid[T]): T = monoid.id
-
-//  implicit class MonoidOps[T](l: T)(implicit monoid: Monoid[T]) {
-//    def |+|(r: T): T = monoid.op(l,r)
-//  }
+  def zero[T](implicit monoid: Monoid[T]): T = monoid.empty
 
   implicit class SumOps[T](l: T)(implicit summable: Group[T]) {
-    def +(r: T): T = summable.op(l,r)
-    def -(r: T): T = summable.opInverse(l,r)
+    def +(r: T): T = summable.combine(l,r)
+    def -(r: T): T = summable.remove(l,r)
     def unary_- : T = summable.inverse(l)
   }
 
-  implicit class VecorOps[T](l: T)(implicit vec: VectorSpace[T]) {
-    def *(r: Double): T = vec.mul(l, r)
-    def /(r: Double): T = vec.div(l, r)
+  implicit class VecorOps[T](l: T)(implicit vec: VectorSpace[T, Double]) {
+    def *(r: Double): T = vec.timesr(l, r)
+    def /(r: Double): T = vec.divr(l, r)
   }
 
   implicit class RingOps[T](l: T)(implicit field: Field[T]) {
@@ -30,7 +26,7 @@ object AlgebraOps {
   }
 
   implicit class VectorPremul(l: Double) {
-    def *[T](r: T)(implicit ev: VectorSpace[T]): T = ev.mul(r, l)
+    def *[T](r: T)(implicit ev: VectorSpace[T, Double]): T = ev.timesl(l, r)
   }
 
 }

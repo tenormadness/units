@@ -2,16 +2,11 @@ package units
 
 import categories.AlgebraImplementations._
 import unitsAlgebra._
-import categories.AlgebraOps._ //this should be from spire
-//import categories.Field //this should be from spire
-import spire.
+import categories.AlgebraOps._
+import spire.algebra._
 import unitsAlgebra.UnitsImplementations._
-
-import Predef.{any2stringadd => _, _}
 import org.scalatest.FlatSpec
 import unitWrapper.UnitContainer._
-import spire.syntax.monoid._
-//import spire.syntax.group._
 
 class UnitsTest extends FlatSpec {
   
@@ -22,29 +17,30 @@ class UnitsTest extends FlatSpec {
 
   "Monoid and summable Ops" should "work" in {
     // categories work
+    import spire.syntax.monoid._
 
     val four = 1.0 |+| 3.0
     assert(four == 4.0)
 
     val oneVector = (1.0, 1.0)
 
-    assert(oneVector + oneVector == (2.0, 2.0))
+    assert(SumOps(oneVector)(VectorAlgebra) + oneVector == (2.0, 2.0))
+
+    //todo: test with units
   }
 
-  "Summable and monoid operations on units" should "work" in {
+  "Summable operations on units" should "work" in {
     // you can sum
     val oneMeter: Double @@ Meter = 1.0.@@[Meter]
     val twoMeters = 2.0.@@[Meter]
   //
-    val threeMeters: Double @@ Meter = oneMeter |+| twoMeters //kill this thing don't be fancy
     val threeMetersAsSum: Double @@ Meter = oneMeter + twoMeters
     val negOneMeter: Double @@ Meter = oneMeter - twoMeters
 
     val negation = -twoMeters
   //
-    assert(threeMeters typeSafeEqual 3.0.@@[Meter])
     assert(threeMetersAsSum typeSafeEqual 3.0.@@[Meter])
-    assert(negOneMeter typeSafeEqual -1.0.@@[Meter])
+    assert(negOneMeter typeSafeEqual -1.0.@@[Meter], s"$negOneMeter does not equal -1.0")
     assert(negation typeSafeEqual -2.0.@@[Meter])
 
   }
@@ -134,24 +130,24 @@ class UnitsTest extends FlatSpec {
     case object O extends Boole
     case object X extends Boole
 
-    implicit object SomeRingIsRing extends Field[Boole] {
-      override def mul(l: Boole, r: Boole): Boole = if (l == O || r == O) O else X
-      override def div(l: Boole, r: Boole): Boole = throw new NotImplementedError() //improper but who cares
-      override def id: Boole = O
-      override def op(l: Boole, r: Boole): Boole = if (l == X || r == X) X else O
-      override def opInverse(l: Boole, r: Boole): Boole = throw new NotImplementedError() //improper but who cares
-      override def inverse(l: Boole): Boole = if (l == X) O else X
+    implicit object SomeRingIsRing extends Group[Boole] {
+
+      override def inverse(a: Boole): Boole = if (a == X) O else X
+
+      override def empty: Boole = X
+
+      override def combine(x: Boole, y: Boole): Boole = if (x == X && y == X) X else O
+
     }
 
-    val o: Boole = O
-    val x: Boole = X
+    val oMeter: Boole @@ Meter = O.@@[Meter]
+    val xMeter: Boole @@ Meter = X.@@[Meter]
 
-    val sum = SumOps(o) + o
-
-    assert(x * o == o)
-    assert(o + o == o)
-    assert(o + x == x)
-    assert(-x == o)
+    //assert(x * o == o) // TODO: Put this back in Rings ain't hard now
+    assert(oMeter + oMeter == O.@@[Meter])
+    assert(oMeter + xMeter == O.@@[Meter])
+    assert(xMeter + xMeter == X.@@[Meter])
+    assert(-xMeter == O.@@[Meter])
 
   }
 
@@ -172,8 +168,5 @@ class UnitsTest extends FlatSpec {
     assert(squareMeter typeSafeEqual 6.0.@@[MeterSq])
     assert(backToMeter typeSafeEqual 1.5.@@[Meter])
 
-
   }
-
-
 }
