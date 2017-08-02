@@ -1,9 +1,9 @@
 package unitsAlgebra
 
-import categories.{Ring, VectorSpace}
+import categories.VectorSpace
 import unitWrapper.UnitContainer._
 import unitsAlgebra.UnitMultiplication.UnitMultiplicationAux
-
+import spire.algebra._
 import scala.annotation.implicitNotFound
 
 /**
@@ -53,12 +53,12 @@ object UnitMultiplication extends LowPriorityMulRules {
 
 trait LowPriorityMulRules extends LowestLevelPremultiply {
 
-  implicit def unitRingMultiply[T, U, UU, UR](implicit ring: Ring[T], unitMultiply: UnitMultiply[U, UU, UR]): UnitMultiplicationAux[T @@ U, T @@ UU, T @@ UR] = {
+  implicit def unitRingMultiply[T, U, UU, UR](implicit ring: Field[T], unitMultiply: UnitMultiply[U, UU, UR]): UnitMultiplicationAux[T @@ U, T @@ UU, T @@ UR] = {
     new UnitMultiplication[T @@ U, T @@ UU] {
 
       override type Result = T @@ UR
 
-      override def mul(l: T @@ U, r: T @@ UU): Result = ring.mul(l.value, r.value).attachUnit[UR]
+      override def mul(l: T @@ U, r: T @@ UU): Result = ring.times(l.value, r.value).attachUnit[UR]
     }
   }
 

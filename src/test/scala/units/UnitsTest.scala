@@ -3,12 +3,15 @@ package units
 import categories.AlgebraImplementations._
 import unitsAlgebra._
 import categories.AlgebraOps._ //this should be from spire
-import categories.Ring //this should be from spire
+//import categories.Field //this should be from spire
+import spire.
 import unitsAlgebra.UnitsImplementations._
 
 import Predef.{any2stringadd => _, _}
 import org.scalatest.FlatSpec
-import unitWrapper.UnitContainer._ //this should be from shapeless
+import unitWrapper.UnitContainer._
+import spire.syntax.monoid._
+//import spire.syntax.group._
 
 class UnitsTest extends FlatSpec {
   
@@ -131,13 +134,13 @@ class UnitsTest extends FlatSpec {
     case object O extends Boole
     case object X extends Boole
 
-    implicit object SomeRingIsRing extends Ring[Boole] {
+    implicit object SomeRingIsRing extends Field[Boole] {
       override def mul(l: Boole, r: Boole): Boole = if (l == O || r == O) O else X
       override def div(l: Boole, r: Boole): Boole = throw new NotImplementedError() //improper but who cares
-      override def zero: Boole = O
-      override def append(l: Boole, r: Boole): Boole = if (l == X || r == X) X else O
-      override def minus(l: Boole, r: Boole): Boole = throw new NotImplementedError() //improper but who cares
-      override def unaryMinus(l: Boole): Boole = if (l == X) O else X
+      override def id: Boole = O
+      override def op(l: Boole, r: Boole): Boole = if (l == X || r == X) X else O
+      override def opInverse(l: Boole, r: Boole): Boole = throw new NotImplementedError() //improper but who cares
+      override def inverse(l: Boole): Boole = if (l == X) O else X
     }
 
     val o: Boole = O

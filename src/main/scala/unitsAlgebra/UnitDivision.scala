@@ -1,8 +1,9 @@
 package unitsAlgebra
 
-import categories.{Ring, VectorSpace}
+import categories.{VectorSpace}
 import unitWrapper.UnitContainer._
 import unitsAlgebra.UnitDivision.UnitDivisionAux
+import spire.algebra._
 
 import scala.annotation.implicitNotFound
 import scala.language.implicitConversions
@@ -50,14 +51,14 @@ object UnitDivision extends LowPriorityDivRules {
 
 trait LowPriorityDivRules {
 
-  implicit def selfDivision[T, U](implicit ring: Ring[T]): UnitDivisionAux[T @@ U, T @@ U, T] = new UnitDivision[T @@ U, T @@ U] {
+  implicit def selfDivision[T, U](implicit ring: Field[T]): UnitDivisionAux[T @@ U, T @@ U, T] = new UnitDivision[T @@ U, T @@ U] {
 
     override type Result = T
 
     override def div(l: T @@ U, r: T @@ U): Result = ring.div(l.value, r.value)
   }
 
-  implicit def unitRingDivision[T, U, UU, UR](implicit ring: Ring[T], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, T @@ UU, T @@ UR] = new UnitDivision[T @@ U, T @@ UU] {
+  implicit def unitRingDivision[T, U, UU, UR](implicit ring: Field[T], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, T @@ UU, T @@ UR] = new UnitDivision[T @@ U, T @@ UU] {
 
     override type Result = T @@ UR
 
