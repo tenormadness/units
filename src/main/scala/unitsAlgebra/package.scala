@@ -3,7 +3,7 @@
   */
 package object unitsAlgebra
   extends UnitAlgebraImplementations
-    with UnitsOps {
+  with UnitsOps {
 
 
   implicit def multiplicationIsCommutative[U, V, W](implicit ev: UnitMultiplyAxiom[U, V, W]) = new UnitMultiply[V, U, W] {}

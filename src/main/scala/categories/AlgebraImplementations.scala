@@ -12,9 +12,7 @@ object AlgebraImplementations {
     override def div(l: Double, r: Double): Double = l / r
     override def empty: Double = 0.0
     override def combine(x: Double, y: Double): Double = x + y
-    override def inverse(a: Double): Double = {
-      -a
-    }
+    override def inverse(a: Double): Double = -a
 
     override implicit def scalar: Field[Double] = implicitly
 

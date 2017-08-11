@@ -2,14 +2,14 @@ package units
 
 import categories.AlgebraImplementations._
 import unitsAlgebra._
-import categories.AlgebraOps._
+import categories.SimpleAlgebraOps._
 import spire.algebra._
 import unitsAlgebra.UnitsImplementations._
 import org.scalatest.FlatSpec
 import unitWrapper.UnitContainer._
 
 class UnitsTest extends FlatSpec {
-  
+
   private implicit class IntelligentEquality[T](l: T) {
     def typeSafeEqual(r: T): Boolean = l == r
   }
@@ -121,6 +121,36 @@ class UnitsTest extends FlatSpec {
 
     assert(mulTest1 typeSafeEqual (10.0, 20.0).@@[Meter])
     assert(mulTest2 typeSafeEqual (10.0, 20.0).@@[Meter])
+  }
+
+  "self division" should "return the original unit" in {
+
+    val a = 1.0.@@[Meter]
+    val b = 10.0.@@[Meter]
+
+    val result = a / b
+
+    assert(result typeSafeEqual 0.1)
+
+  }
+
+  "inverse multiplication and division test" should "work seamlessly" in {
+
+    val a = 2.0.@@[Meter]
+    val b = 0.1.@@[OneOvrMeter]
+
+    val result1 = a * b
+    val result1Bis = b * a
+    val result2 = 1.0 / a
+    val result3 = 1.0 / b
+
+
+    assert(result1 typeSafeEqual 0.2)
+    assert(result1 typeSafeEqual result1Bis)
+    assert(result2 typeSafeEqual 0.5.@@[OneOvrMeter])
+    assert(result3 typeSafeEqual 10.0.@@[Meter])
+
+
   }
 
   "Defining a simple Ring Class" should "not interfere with units" in {

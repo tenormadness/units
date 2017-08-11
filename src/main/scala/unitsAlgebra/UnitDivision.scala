@@ -48,7 +48,7 @@ object UnitDivision extends LowPriorityDivRules {
   }
 }
 
-trait LowPriorityDivRules {
+trait LowPriorityDivRules /*extends InverseUnitsDivision*/ {
 
   implicit def selfDivision[T, U](implicit ring: Field[T]): UnitDivisionAux[T @@ U, T @@ U, T] = new UnitDivision[T @@ U, T @@ U] {
 
@@ -63,5 +63,22 @@ trait LowPriorityDivRules {
 
     override def div(l: T @@ U, r: T @@ UU): Result = ring.div(l.value, r.value).attachUnit[UR]
   }
-
 }
+
+//trait InverseUnitsDivision {
+//  implicit def inverseVectorDivision[T, U, UR](implicit vector: VectorSpace[T, Double], unitMultiply: InverseUnit[UR, U]): UnitDivisionAux[T, Double @@ U, T @@ UR] = {
+//    new UnitDivision[T, Double @@ U] {
+//
+//      override type Result = T @@ UR
+//
+//      override def div(l: T, r: Double @@ U): Result = vector.divr(l, r.value).attachUnit[UR]
+//    }
+//  }
+//
+//  implicit def inverseRingDivision[T, U, UR](implicit ring: Field[T], unitMultiply: InverseUnit[UR, U]): UnitDivisionAux[T, T @@ U, T @@ UR] = new UnitDivision[T, T @@ U] {
+//
+//    override type Result = T @@ UR
+//
+//    override def div(l: T, r: T @@ U): Result = ring.div(l, r.value).attachUnit[UR]
+//  }
+//}
