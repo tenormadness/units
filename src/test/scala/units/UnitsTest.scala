@@ -20,13 +20,7 @@ class UnitsTest extends FlatSpec {
     import spire.syntax.monoid._
 
     val four = 1.0 |+| 3.0
-    assert(four == 4.0)
-
-    val oneVector = (1.0, 1.0)
-
-    assert(SumOps(oneVector)(VectorAlgebra) + oneVector == (2.0, 2.0))
-
-    //todo: test with units
+    assert(four typeSafeEqual 4.0)
   }
 
   "Summable operations on units" should "work" in {
@@ -159,20 +153,18 @@ class UnitsTest extends FlatSpec {
     case object O extends Boole
     case object X extends Boole
 
-    implicit object SomeRingIsRing extends Group[Boole] {
-
-      override def inverse(a: Boole): Boole = if (a == X) O else X
-
-      override def empty: Boole = X
-
-      override def combine(x: Boole, y: Boole): Boole = if (x == X && y == X) X else O
-
+    implicit object BooleIsRing extends Ring[Boole] {
+      override def negate(x: Boole): Boole = if (x == X) O else X
+      override def zero: Boole = X
+      override def plus(x: Boole, y: Boole): Boole = if (x == X && y == X) X else O
+      override def one: Boole = O
+      override def times(x: Boole, y: Boole): Boole = if (x == O && y == O) O else X
     }
 
     val oMeter: Boole @@ Meter = O.@@[Meter]
     val xMeter: Boole @@ Meter = X.@@[Meter]
 
-    //assert(x * o == o) // TODO: Put this back in Rings ain't hard now
+    assert(xMeter * oMeter == xMeter)
     assert(oMeter + oMeter == O.@@[Meter])
     assert(oMeter + xMeter == O.@@[Meter])
     assert(xMeter + xMeter == X.@@[Meter])

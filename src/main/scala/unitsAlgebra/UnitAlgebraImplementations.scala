@@ -1,5 +1,6 @@
 package unitsAlgebra
 
+import algebra.ring.AdditiveCommutativeGroup
 import spire.algebra._
 import unitWrapper.UnitContainer._
 
@@ -30,21 +31,21 @@ trait UnitAlgebraImplementations extends  LowPriority1 {
 
 trait LowPriority1 extends LowPriority2 {
 
-  implicit def unitsSummable[U, T](implicit ev: Group[T]): Group[T @@ U] = new Group[T @@ U] {
+  implicit def unitsSummable[U, T](implicit ev: AdditiveCommutativeGroup[T]): AdditiveCommutativeGroup[T @@ U] = new AdditiveCommutativeGroup[T @@ U] {
 
-    override def empty: @@[T, U] = ev.empty.attachUnit[U]
+    override def zero: @@[T, U] = ev.zero.attachUnit[U]
 
-    override def combine(x: @@[T, U], y: @@[T, U]): @@[T, U] = ev.combine(x.value, y.value).attachUnit[U]
+    override def plus(x: @@[T, U], y: @@[T, U]): @@[T, U] = ev.plus(x.value, y.value).attachUnit[U]
 
-    override def inverse(l: @@[T, U]): @@[T, U] = ev.inverse(l.value).attachUnit[U]
+    override def negate(l: @@[T, U]): @@[T, U] = ev.negate(l.value).attachUnit[U]
   }
 }
 
 trait LowPriority2 {
 
-  implicit def unitsMonoid[U, T](implicit ev: Monoid[T]): Monoid[T @@ U] = new Monoid[T @@ U] {
-    override def empty: @@[T, U] = ev.empty.attachUnit[U]
+  implicit def unitsGroup[U, T](implicit ev: AdditiveMonoid[T]): AdditiveMonoid[T @@ U] = new AdditiveMonoid[T @@ U] {
+    override def zero: @@[T, U] = ev.zero.attachUnit[U]
 
-    override def combine(l: @@[T, U], r: @@[T, U]): T @@ U = ev.combine(l.value, r.value).attachUnit[U]
+    override def plus(l: @@[T, U], r: @@[T, U]): T @@ U = ev.plus(l.value, r.value).attachUnit[U]
   }
 }

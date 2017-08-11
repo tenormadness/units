@@ -1,5 +1,6 @@
 package categories
 
+import algebra.ring.AdditiveCommutativeGroup
 import spire.algebra._
 
 /**
@@ -7,12 +8,12 @@ import spire.algebra._
   */
 object SimpleAlgebraOps {
 
-  def zero[T](implicit monoid: Monoid[T]): T = monoid.empty
+  def zero[T](implicit monoid: AdditiveCommutativeGroup[T]): T = monoid.zero
 
-  implicit class SumOps[T](l: T)(implicit summable: Group[T]) {
-    def +(r: T): T = summable.combine(l,r)
-    def -(r: T): T = summable.remove(l,r)
-    def unary_- : T = summable.inverse(l)
+  implicit class SumOps[T](l: T)(implicit summable: AdditiveCommutativeGroup[T]) {
+    def +(r: T): T = summable.plus(l,r)
+    def -(r: T): T = summable.minus(l,r)
+    def unary_- : T = summable.negate(l)
   }
 
 }
