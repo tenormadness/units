@@ -1,0 +1,3 @@
+1) typeSafe equality (spine Eq ?)
+2) Better class layering (Monoid, rings, etc.)
+3) More units operations (inverse, square)

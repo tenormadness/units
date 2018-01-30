@@ -1,8 +1,8 @@
 package unitsAlgebra
 
-import categories.{Ring, VectorSpace}
 import unitWrapper.UnitContainer._
 import unitsAlgebra.UnitDivision.UnitDivisionAux
+import spire.algebra._
 
 import scala.annotation.implicitNotFound
 import scala.language.implicitConversions
@@ -29,39 +29,56 @@ object UnitDivision extends LowPriorityDivRules {
 
   type UnitDivisionAux[L, R, Out] = UnitDivision[L, R] { type Result = Out }
 
-  implicit def unitVectorDivision[T, U, UU, UR](implicit vector: VectorSpace[T], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, Double @@ UU, T @@ UR] = {
+  implicit def unitVectorDivision[T, U, UU, UR](implicit vector: VectorSpace[T, Double], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, Double @@ UU, T @@ UR] = {
     new UnitDivision[T @@ U, Double @@ UU] {
 
       override type Result = T @@ UR
 
-      override def div(l: T @@ U, r: Double @@ UU): Result = vector.div(l.value, r.value).attachUnit[UR]
+      override def div(l: T @@ U, r: Double @@ UU): Result = vector.divr(l.value, r.value).attachUnit[UR]
     }
   }
 
-  implicit def doubleVectorDivision[T, U](implicit vector: VectorSpace[T]): UnitDivisionAux[T @@ U, Double, T @@ U] = {
+  implicit def doubleVectorDivision[T, U](implicit vector: VectorSpace[T, Double]): UnitDivisionAux[T @@ U, Double, T @@ U] = {
     new UnitDivision[T @@ U, Double] {
 
       override type Result = T @@ U
 
-      override def div(l: T @@ U, r: Double): Result = vector.div(l.value, r).attachUnit[U]
+      override def div(l: T @@ U, r: Double): Result = vector.divr(l.value, r).attachUnit[U]
     }
   }
 }
 
-trait LowPriorityDivRules {
+trait LowPriorityDivRules /*extends InverseUnitsDivision*/ {
 
-  implicit def selfDivision[T, U](implicit ring: Ring[T]): UnitDivisionAux[T @@ U, T @@ U, T] = new UnitDivision[T @@ U, T @@ U] {
+  implicit def selfDivision[T, U](implicit ring: Field[T]): UnitDivisionAux[T @@ U, T @@ U, T] = new UnitDivision[T @@ U, T @@ U] {
 
     override type Result = T
 
     override def div(l: T @@ U, r: T @@ U): Result = ring.div(l.value, r.value)
   }
 
-  implicit def unitRingDivision[T, U, UU, UR](implicit ring: Ring[T], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, T @@ UU, T @@ UR] = new UnitDivision[T @@ U, T @@ UU] {
+  implicit def unitRingDivision[T, U, UU, UR](implicit ring: Field[T], unitMultiply: UnitMultiply[UR, UU, U]): UnitDivisionAux[T @@ U, T @@ UU, T @@ UR] = new UnitDivision[T @@ U, T @@ UU] {
 
     override type Result = T @@ UR
 
     override def div(l: T @@ U, r: T @@ UU): Result = ring.div(l.value, r.value).attachUnit[UR]
   }
-
 }
+
+//trait InverseUnitsDivision {
+//  implicit def inverseVectorDivision[T, U, UR](implicit vector: VectorSpace[T, Double], unitMultiply: InverseUnit[UR, U]): UnitDivisionAux[T, Double @@ U, T @@ UR] = {
+//    new UnitDivision[T, Double @@ U] {
+//
+//      override type Result = T @@ UR
+//
+//      override def div(l: T, r: Double @@ U): Result = vector.divr(l, r.value).attachUnit[UR]
+//    }
+//  }
+//
+//  implicit def inverseRingDivision[T, U, UR](implicit ring: Field[T], unitMultiply: InverseUnit[UR, U]): UnitDivisionAux[T, T @@ U, T @@ UR] = new UnitDivision[T, T @@ U] {
+//
+//    override type Result = T @@ UR
+//
+//    override def div(l: T, r: T @@ U): Result = ring.div(l, r.value).attachUnit[UR]
+//  }
+//}

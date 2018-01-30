@@ -2,16 +2,14 @@ package units
 
 import categories.AlgebraImplementations._
 import unitsAlgebra._
-import categories.AlgebraOps._ //this should be from spire
-import categories.Ring //this should be from spire
+import categories.SimpleAlgebraOps._
+import spire.algebra._
 import unitsAlgebra.UnitsImplementations._
-
-import Predef.{any2stringadd => _, _}
 import org.scalatest.FlatSpec
-import unitWrapper.UnitContainer._ //this should be from shapeless
+import unitWrapper.UnitContainer._
 
 class UnitsTest extends FlatSpec {
-  
+
   private implicit class IntelligentEquality[T](l: T) {
     def typeSafeEqual(r: T): Boolean = l == r
   }
@@ -19,29 +17,24 @@ class UnitsTest extends FlatSpec {
 
   "Monoid and summable Ops" should "work" in {
     // categories work
+    import spire.syntax.monoid._
 
     val four = 1.0 |+| 3.0
-    assert(four == 4.0)
-
-    val oneVector = (1.0, 1.0)
-
-    assert(oneVector + oneVector == (2.0, 2.0))
+    assert(four typeSafeEqual 4.0)
   }
 
-  "Summable and monoid operations on units" should "work" in {
+  "Summable operations on units" should "work" in {
     // you can sum
     val oneMeter: Double @@ Meter = 1.0.@@[Meter]
     val twoMeters = 2.0.@@[Meter]
   //
-    val threeMeters: Double @@ Meter = oneMeter |+| twoMeters //kill this thing don't be fancy
     val threeMetersAsSum: Double @@ Meter = oneMeter + twoMeters
     val negOneMeter: Double @@ Meter = oneMeter - twoMeters
 
     val negation = -twoMeters
   //
-    assert(threeMeters typeSafeEqual 3.0.@@[Meter])
     assert(threeMetersAsSum typeSafeEqual 3.0.@@[Meter])
-    assert(negOneMeter typeSafeEqual -1.0.@@[Meter])
+    assert(negOneMeter typeSafeEqual -1.0.@@[Meter], s"$negOneMeter does not equal -1.0")
     assert(negation typeSafeEqual -2.0.@@[Meter])
 
   }
@@ -79,7 +72,6 @@ class UnitsTest extends FlatSpec {
     assert(result1 typeSafeEqual (2.0, 4.0))
     assert(result2 typeSafeEqual (3.0, 6.0))
     assert(result3 typeSafeEqual (0.25, 0.5))
-
 
   }
 
@@ -125,30 +117,58 @@ class UnitsTest extends FlatSpec {
     assert(mulTest2 typeSafeEqual (10.0, 20.0).@@[Meter])
   }
 
+  "self division" should "return the original unit" in {
+
+    val a = 1.0.@@[Meter]
+    val b = 10.0.@@[Meter]
+
+    val result = a / b
+
+    assert(result typeSafeEqual 0.1)
+
+  }
+
+  "inverse multiplication and division test" should "work seamlessly" in {
+
+    val a = 2.0.@@[Meter]
+    val b = 0.1.@@[OneOvrMeter]
+
+    val result1 = a * b
+    val result1Bis = b * a
+    val result2 = 1.0 / a
+    val result3 = 1.0 / b
+
+
+    assert(result1 typeSafeEqual 0.2)
+    assert(result1 typeSafeEqual result1Bis)
+    assert(result2 typeSafeEqual 0.5.@@[OneOvrMeter])
+    assert(result3 typeSafeEqual 10.0.@@[Meter])
+
+
+  }
+
   "Defining a simple Ring Class" should "not interfere with units" in {
 
     trait Boole extends Product with Serializable
     case object O extends Boole
     case object X extends Boole
 
-    implicit object SomeRingIsRing extends Ring[Boole] {
-      override def mul(l: Boole, r: Boole): Boole = if (l == O || r == O) O else X
-      override def div(l: Boole, r: Boole): Boole = throw new NotImplementedError() //improper but who cares
-      override def zero: Boole = O
-      override def append(l: Boole, r: Boole): Boole = if (l == X || r == X) X else O
-      override def minus(l: Boole, r: Boole): Boole = throw new NotImplementedError() //improper but who cares
-      override def unaryMinus(l: Boole): Boole = if (l == X) O else X
+    implicit object BooleIsRing extends Ring[Boole] {
+      override def negate(x: Boole): Boole = if (x == X) O else X
+      override def zero: Boole = X
+      override def plus(x: Boole, y: Boole): Boole = if (x == X && y == X) X else O
+      override def one: Boole = O
+      override def times(x: Boole, y: Boole): Boole = if (x == O && y == O) O else X
     }
 
-    val o: Boole = O
-    val x: Boole = X
+    val oMeter: Boole @@ Meter = O.@@[Meter]
+    val xMeter: Boole @@ Meter = X.@@[Meter]
 
-    val sum = SumOps(o) + o
-
-    assert(x * o == o)
-    assert(o + o == o)
-    assert(o + x == x)
-    assert(-x == o)
+    assert(xMeter * oMeter == xMeter)
+    assert(oMeter + oMeter == O.@@[Meter])
+    assert(oMeter + xMeter == O.@@[Meter])
+    assert(xMeter + xMeter == X.@@[Meter])
+    assert(-xMeter == O.@@[Meter])
 
   }
 
@@ -169,8 +189,5 @@ class UnitsTest extends FlatSpec {
     assert(squareMeter typeSafeEqual 6.0.@@[MeterSq])
     assert(backToMeter typeSafeEqual 1.5.@@[Meter])
 
-
   }
-
-
 }
